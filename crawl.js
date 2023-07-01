@@ -2,25 +2,46 @@ const { url } = require('inspector')
 const {JSDOM} = require('jsdom')
 
 
-async function crawlPage(currentURL){
+async function crawlPage(baseURL,currentURL,pages){
+    const baseURLObj = new URL(baseURL)
+    const currentURLObj = new URL(currentURL)
+
+    if(baseURLObj.hostname !== currentURLObj.hostname){
+        return pages
+    }
+
+    const normalizeCurrentURL = normalizeUrl(currentURL)
+    if(pages[normalizeCurrentURL]>0){
+        pages[normalizeCurrentURL]++
+        return pages
+    }
+    pages[normalizeCurrentURL]=1
+
     console.log(`Actively crawling: ${currentURL}`)
     try{
         const resp = await fetch(currentURL)
         if(resp.status>399){
-            console.log(`Error in the fetch with status code: ${resp.status} current page ${currentURL}`)
-            return
+            console.log(`Error in the fetch with status code: ${resp.status} current pages ${currentURL}`)
+            return pages
         }
 
         const contentType = resp.headers.get('content-type')
         if(!contentType.includes('text/html')){
             console.log(`Non html response, content type: ${contentType} current page ${currentURL}`)
-            return
+            return pages
         }
-        console.log(await resp.text())
+        const htmlBody = await resp.text()
+        const nextURLs= getURLsFromHTML(htmlBody,baseURL)
+        
+        for(const nextURL of nextURLs){
+            pages = await crawlPage(baseURL,nextURL,pages)
+        }
    
     }catch(error){
         console.log(`Error in the fetch ${error.message} at page ${currentURL}`)
     }
+
+    return pages
 
 
 }
