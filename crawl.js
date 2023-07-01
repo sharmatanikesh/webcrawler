@@ -1,5 +1,30 @@
 const { url } = require('inspector')
 const {JSDOM} = require('jsdom')
+
+
+async function crawlPage(currentURL){
+    console.log(`Actively crawling: ${currentURL}`)
+    try{
+        const resp = await fetch(currentURL)
+        if(resp.status>399){
+            console.log(`Error in the fetch with status code: ${resp.status} current page ${currentURL}`)
+            return
+        }
+
+        const contentType = resp.headers.get('content-type')
+        if(!contentType.includes('text/html')){
+            console.log(`Non html response, content type: ${contentType} current page ${currentURL}`)
+            return
+        }
+        console.log(await resp.text())
+   
+    }catch(error){
+        console.log(`Error in the fetch ${error.message} at page ${currentURL}`)
+    }
+
+
+}
+
 function getURLsFromHTML(htmlBody,baseURL){
 
     const urls =[]
@@ -43,5 +68,6 @@ function normalizeUrl(urlString){
 
 module.exports = {
     normalizeUrl,
-    getURLsFromHTML
+    getURLsFromHTML,
+    crawlPage
 }
