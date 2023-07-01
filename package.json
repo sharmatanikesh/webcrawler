@@ -1,0 +1,23 @@
+{
+  "name": "webcrawler",
+  "version": "1.0.0",
+  "description": "Project for the learn http",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sharmatanikesh/webcrawler.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sharmatanikesh/webcrawler/issues"
+  },
+  "homepage": "https://github.com/sharmatanikesh/webcrawler#readme",
+  "devDependencies": {
+    "jest": "^29.5.0"
+  }
+}
